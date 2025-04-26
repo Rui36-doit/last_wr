@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="test.css" rel="stylesheet">
+</head>
+<body>
+<h2>管理员页面</h2>
+<hr>
+<div id="managerapp">
+    <!--标题-->
+    <div class="cloum">
+        <label class="title1">管理员id:{{manager.username}}</label>
+        <input type="button" class="btn2" value="管理用户" v-on:click="showusers">
+        <input type="button" class="btn2" value="审核商品" v-on:click="showwaitingshops">
+        <input type="button" class="btn2" value="查看所有订单" v-on:click="getallorder">
+        <input type="button" class="btn2" value="查看所有商品" v-on:click="showallshops">
+        <input type="button" class="btn2" value="查看销售总额" v-on:click="getallmoney">
+    </div>
+
+    <!--待审核数据-->
+    <div class="blueback" v-show="UI.waitingshopsUI">
+        <h3>待审核商品</h3>
+        <div class="shop" v-for="(shop , i) in waitingshops" v-on:click="showwaitingshop(i, waitingshops)">
+            <img :src="shop.photo" height="100">
+            <label>名称：{{shop.name}}</label>
+            <label class="price">价格：{{shop.price}}</label>
+            <label>介绍：{{shop.describe}}</label>
+        </div>
+    </div>
+
+    <!--查询商品-->
+    <div class="inforeback" v-show="UI.searchheadUI">
+        <label>搜索：</label>
+        <input class="jtf" type="text" v-model="searchkey"><input class="btn2" type="button" value="搜索" v-on:click="searchforshops">
+    </div>
+
+    <!--全部商品-->
+    <div class="blueback" v-show="UI.shopsUI">
+        <h3>全部商品</h3>
+        <div class="shop" v-for="(shop , i) in allshops" v-on:click="showtheshop(i, allshops)">
+            <img :src="shop.photo" height="100">
+            <label>名称：{{shop.name}}</label>
+            <label class="price">价格：{{shop.price}}</label>
+            <label>介绍：{{shop.describe}}</label>
+        </div>
+    </div>
+
+    <!--显示查询结果-->
+    <div class="inforeback" v-show="UI.searchUI">
+        <h3>查询结果</h3>
+        <div class="shop" v-for="(shop , i) in searchshops" v-on:click="showtheshop(i, searchshops)">
+            <img :src="shop.photo" height="100">
+            <label>名称：{{shop.name}}</label>
+            <label class="price">价格：{{shop.price}}</label>
+            <label>介绍：{{shop.describe}}</label>
+        </div>
+    </div>
+
+    <!--审核商品信息的页面-->
+    <div class="inforeback" v-show="UI.thewaitingshopUI">
+        <h2>商品信息</h2>
+        <div>
+            <h3>{{shop.name}}</h3>
+            <img :src="shop.photo" height="400"><br>
+            <label>类型：{{shop.kind}}</label><br>
+            <label>发布时间时间：{{formattedDate(shop.time)}}</label><br>
+            <label>描述：{{shop.describe}}</label><br>
+            <label>商家：{{shop.sellername}}</label><br>
+            <label class="price">价格：{{shop.price}}</label><br>
+            <input class="btn" type="button" value="通过" v-on:click="checkshop('pass')">
+            <input class="btn" type="button" value="不通过" v-on:click="checkshop('not_pass')">
+            <input class="btn" type="button" value="返回" v-on:click="backtocheck">
+        </div>
+    </div>
+
+    <!--商品信息的页面-->
+    <div class="inforeback" v-show="UI.theshopUI">
+        <h2>商品信息</h2>
+        <div>
+            <h3>{{shop.name}}</h3>
+            <img :src="shop.photo" height="400"><br>
+            <label>类型：{{shop.kind}}</label><br>
+            <label>发布时间时间：{{formattedDate(shop.time)}}</label><br>
+            <label>描述：{{shop.describe}}</label><br>
+            <label>商家：{{shop.sellername}}</label><br>
+            <label class="price">价格：{{shop.price}}</label><br>
+            <label>状态：{{shop.type}}</label><br>
+            <input class="btn1" type="button" value="下架商品" v-on:click="blockshop" v-if="shop.type === 'pass'">
+            <input class="btn1" type="button" value="上架商品" v-on:click="upshop" v-if="shop.type === 'no'">
+            <input class="btn" type="button" value="返回" v-on:click="backtoshops">
+        </div>
+    </div>
+
+    <!--展示用户信息-->
+    <div v-show="UserUI.usersUI">
+        <h3>用户信息</h3>
+        <form v-for="(user, i) in users" v-on:click="showuserinfore(i, users)">
+            <label>用户id：{{user.id}}</label><br>
+            <label>用户名：{{user.name}}</label><br>
+            <label>用户状态：{{user.type === 'ok' ? '正常' : shop.type === 'no' ? '封禁' : '未知'}}</label>
+        </form>
+    </div>
+
+    <!--展示用户的信息功能-->
+    <div v-show="UserUI.userUI">
+        <h3>用户名字：{{user.name}}</h3>
+        <label>用户id：{{user.id}}</label><br>
+        <label>用户评分：{{user.score}}</label><br>
+        <label>用户邮箱：{{user.email}}</label><br>
+        <label>用户电话号码：{{user.phonenumber}}</label><br>
+        <label>用户状态：{{user.type === 'ok' ? '正常' : shop.type === 'no' ? '封禁' : '未知'}}</label>
+        <input class="btn1" type="button" value="封禁该用户" v-if="user.type === 'ok'" v-on:click="block_the_user">
+        <input class="btn1" type="button" value="解封该用户" v-if="user.type === 'no'" v-on:click="up_the_user">
+        <input class="btn1" type="button" value="查看用户的订单" v-on:click="showuserorder">
+        <input class="btn1" type="button" value="查看用户的历史交易" v-on:click="showhistory">
+        <!--展示用户的订单信息-->
+        <div v-show="UserUI.userorderUI">
+            <h3>用户订单信息</h3>
+            <form v-for="(order, i) in userorders">
+                <label>商品名称：{{order.shop_name}}</label><br>
+                <label>卖家：{{order.seller_name}}</label><br>
+                <label>订单状态：{{order.type}}</label><br>
+                <label>订单时间：{{formattedDate(order.sent_time)}}</label><br>
+            </form>
+        </div>
+        <!--展示用户方历史记录信息-->
+        <div v-show="UserUI.userhistoryUI">
+            <h3>用户的历史记录</h3>
+            <form v-for="(history, i) in userhistory">
+                <h4 v-if="history.seller_id === user.id">卖出</h4>
+                <h4 v-if="history.buyer_id === user.id">买入</h4>
+                <label>买家：{{history.buyer_name}}</label><br>
+                <label>卖家：{{history.seller_name}}</label><br>
+                <label>商品名称：{{history.name}}</label><br>
+                <label>时间：{{formattedDate(history.time)}}</label><br>
+                <label>状态：{{history.type}}</label>
+            </form>
+        </div>
+    </div>
+
+    <!--展示所有的订单信息-->
+    <div class="inforeback" v-show="OrderUI.ordersUI">
+        <h3>订单信息</h3>
+        <label>搜索：</label>
+        <input class="jtf" type="text" v-model="searchkey"><input class="btn2" type="button" value="搜索" v-on:click="searchorder">
+        <!--展示订单信息-->
+        <div v-show="OrderUI.startUI" >
+            <form v-for="(order, i) in allorder">
+                <label>商品名称：{{order.shop_name}}</label><br>
+                <label>买家：{{order.buyer_name}}</label><br>
+                <label>商家：{{order.seller_name}}</label><br>
+                <label>金额：{{order.money}}</label><br>
+                <label>支付方式：{{order.pay_type}}</label><br>
+                <label>商品状态: {{order.type}}</label><br>
+                <label>时间：{{formattedDate(order.sent_time)}}</label>
+            </form>
+        </div>
+
+        <!--搜索订单-->
+        <div v-show="OrderUI.searchUI">
+            <h4>查询结果</h4>
+            <form v-for="(order, i) in searchorders">
+                <label>商品名称：{{order.shop_name}}</label><br>
+                <label>买家：{{order.buyer_name}}</label><br>
+                <label>商家：{{order.seller_name}}</label><br>
+                <label>金额：{{order.money}}</label><br>
+                <label>支付方式：{{order.pay_type}}</label><br>
+                <label>商品状态: {{order.type}}</label><br>
+                <label>时间：{{formattedDate(order.sent_time)}}</label>
+            </form>
+        </div>
+    </div>
+
+    <!--展示销售额-->
+    <div v-show="SumUI">
+        <form>
+            <h3>销售额</h3>
+            <label for="month">选择年份和月份：</label><br>
+            <input type="month" id="month" name="month" v-model="monthValue"><br>
+            <label>总额：{{sum}}</label><br>
+            <label>当前月份总额：{{timesum}}</label><br>
+            <input type="button" class="btn1" value="查询" v-on:click="getsumbymonth">
+        </form>
+    </div>
+
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+<script src="manager.js"></script>
+</body>
+</html>

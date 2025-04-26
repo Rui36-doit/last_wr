@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="test.css" rel="stylesheet">
+</head>
+<body>
+<div id="app">
+    <label for="month">选择年份和月份：</label>
+    <input type="month" id="month" name="month" v-model="time">
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+    <script>
+        new Vue({
+            el:"#app",
+            data(){
+                return{
+                    file: null,
+                    previewUrl: null,
+                    time: new Date()
+                };
+            },
+            methods:{
+                handleFileChange(e) {
+                    const selectedFile = e.target.files[0];
+                    if (!selectedFile) return;
+
+                    this.file = selectedFile;
+
+                    // 生成临时预览 URL
+                    this.previewUrl = URL.createObjectURL(selectedFile);
+                },
+            },
+            beforeDestroy() {
+                if (this.previewUrl) {
+                    URL.revokeObjectURL(this.previewUrl);
+                }
+            }
+        })
+    </script>
+
+</body>
+</html>

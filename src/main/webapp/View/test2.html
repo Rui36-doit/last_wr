@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>月份选择示例</title>
+    <!-- 如果不需要样式可以移除此行 -->
+    <!-- <link href="test.css" rel="stylesheet"> -->
+</head>
+<body>
+<div id="app">
+    <label for="month">选择年份和月份：</label>
+    <input type="month" id="month" name="month" v-model="monthValue">
+
+    <!-- 如果需要文件上传可以添加这个 -->
+    <!-- <input type="file" @change="handleFileChange"> -->
+
+    <p>当前选择：{{ monthValue }}</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+<script>
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                monthValue: this.getCurrentMonth(), // 初始化当前年月
+                file: null,
+                previewUrl: null
+            };
+        },
+        methods: {
+            // 获取当前年月（YYYY-MM格式）
+            getCurrentMonth() {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                return `${year}-${month}`;
+            },
+
+            handleFileChange(e) {
+                const selectedFile = e.target.files[0];
+                if (!selectedFile) return;
+
+                this.file = selectedFile;
+
+                // 生成临时预览 URL
+                if (this.previewUrl) {
+                    URL.revokeObjectURL(this.previewUrl); // 释放之前的URL
+                }
+                this.previewUrl = URL.createObjectURL(selectedFile);
+            }
+        },
+        beforeDestroy() {
+            // 清理对象URL
+            if (this.previewUrl) {
+                URL.revokeObjectURL(this.previewUrl);
+            }
+        }
+    })
+</script>
+</body>
+</html>

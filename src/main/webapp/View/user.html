@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="test.css" rel="stylesheet">
+</head>
+<body>
+<h2>二手市场</h2>
+<hr>
+<div id="userapp" >
+    <label class="warn" v-if="infor_type === '有新消息'">你有新消息</label>
+    <div class="cloum" v-show="UI.shopsHeadUI">
+        <label class="title">商品</label>
+        <label class="title1" v-on:click="backtoshop">主页</label>
+        <label class="title1" v-on:click="tosearch">搜索</label>
+        <input class="btn2" type="button" value="查看我的商品" v-on:click="showmyshops">
+        <input class="btn2" type="button" value="查看信用" v-on:click="toscore">
+        <input class="btn2" type="button" value="查看我的订单" v-on:click="showorder">
+        <input class="btn2" type="button" value="查看我的评论" v-on:click="showmyevalues">
+        <input class="btn2" type="button" value="查看我的消息" v-on:click="showmassage">
+        <label class="infore" v-on:click="toinfore">用户名：{{user.name}}</label>
+        <input class="btn2" type="button" value="退出登录" v-on:click="outlogin">
+    </div>
+
+    <!--搜索商品页面-->
+    <div class="blueback" v-show="UI.searchHead" style="display: flex; align-items: center; gap: 10px;">
+        <label>搜索：</label>
+        <input class="jtf" type="text" v-model="searchkey"><input class="btn2" type="button" value="搜索" v-on:click="searchforshops">
+        <input class="btn1" type="button" :value="kind" v-for="(kind, i) in kinds" v-on:click="searchkindshops(kind)">
+        <div>
+            <input type="radio" name="sort" value="no" v-model="sort">
+            <label>不排序</label>
+            <input type="radio" name="sort" value="by_price_up" v-model="sort">
+            <label>按价格排序（从低到高）</label>
+            <input type="radio" name="sort" value="by_price_down" v-model="sort">
+            <label>按价格排序（从高到低）</label>
+        </div>
+    </div>
+
+    <!--主页面推荐商品-->
+    <div v-show="UI.shopsUI">
+        <h2>推荐商品</h2>
+        <div class="shop" v-for="(shop, i) in adviceshops" v-on:click="showtheshops(i, shop.id, adviceshops)">
+            <img :src="shop.photo" height="100">
+            <label>名称：{{shop.name}}</label>
+            <label class="price">价格：{{shop.price}}</label>
+            <label>介绍：{{shop.describe}}</label>
+        </div>
+    </div>
+
+    <!--用户信息-->
+    <div v-show="UI.inforUI">
+        <form>
+            <label>id:{{user.id}}</label><br>
+            <label>姓名</label>
+            <input type="text" class="jtf" v-model="user.name">
+            <label class="warn" v-if="user.name === ''">*必填*</label><br>
+            <label>电话号码</label>
+            <input type="text" class="jtf" v-model="user.phonenumber">
+            <label class="warn" v-if="user.phonenumber === ''">*必填*</label>
+            <label class="warn" v-if="!checkphonenumber(user.phonenumber)">*电话号码只能是数字*</label><br>
+            <input type="button" class="btn1" value="保存修改信息" v-on:click="submitchangeinfor">
+            <input type="button" class="btn" value="返回" v-on:click="backtoshop">
+        </form>
+    </div>
+
+    <!--城信表单-->
+    <div class="inforeback" v-show="UI.scoreUI">
+        <h2>诚信信息</h2>
+        <label>信用分数: {{user.score}}</label>
+        <input type="button" class="btn1" value="查看用户评价" v-on:click="toevaluate">
+        <input type="button" class="btn1" value="查看历史交易记录" v-on:click="tohistory">
+        <input type="button" class="btn1" value="回到主页" v-on:click="backtoshop">
+    </div>
+
+    <!--评价-->
+    <div class="inforeback" v-show="UI.evaluateUI">
+        <h3>用户评价</h3>
+        <form v-for="(evaluate, i) in evaluates">
+            <label>用户名：{{evaluate.buyername}}</label><br>
+            <label>用户评价：{{evaluate.content}}</label><br>
+            <label>评价分数：{{evaluate.score}}</label><br>
+            <label>回复用户</label>
+            <div>
+                <textarea v-model="response"></textarea>
+                <input class="btn" type="button" value="回复" v-on:click="responsebuyer(i, evaluates)">
+            </div>
+        </form>
+    </div>
+
+    <!--历史交易记录-->
+    <div class="inforeback" v-show="UI.historyUI">
+        <h3>历史交易记录</h3>
+        <form v-for="history in histories">
+            <label>买方：{{history.seller}}</label><br>
+            <label>商品：{{history.shop}}</label><br>
+            <label>时间：{{history.time}}</label>
+        </form>
+    </div>
+
+    <!--商品展示平台-->
+    <div class="inforeback" v-show="UI.theshopsUI">
+        <div>
+            <h2>{{shop.name}}</h2>
+            <img :src="shop.photo" height="400"><br>
+            <label>描述：{{shop.describe}}</label><br>
+            <label>商家：{{shop.sellername}}</label><br>
+            <label>库存：{{shop.number === 0 ? '没有货了' : shop.number}}</label><br>
+            <label>信誉：{{seller_score}}</label><br>
+            <label class="price">价格：{{shop.price}}</label>
+           <input class="btn" type="button" value="购买" v-on:click="pay">
+        </div>
+        <div>
+            <h3>评价</h3>
+            <form v-for="(evaluate, i) in shop_evaluates">
+                <label>用户名：{{evaluate.buyername}}</label><br>
+                <label>用户评价：{{evaluate.content}}</label><br>
+                <label>评价分数：{{evaluate.score}}</label>
+                <div v-if="evaluate.response !== '' || evaluate.response !== null">
+                    <label>商家回复</label>
+                    <label>{{evaluate.response}}</label>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--搜索商品的结果-->
+    <div class="inforeback" v-show="UI.searchUI">
+        <h3>搜索结果</h3>
+        <div class="shop" v-for="(shop, i) in searchshops" v-on:click="showtheshops(i, shop.id, searchshops)">
+            <img :src="shop.photo" height="100">
+            <label>名称：{{shop.name}}</label>
+            <label class="price">价格：{{shop.price}}</label>
+            <label>介绍：{{shop.describe}}</label>
+        </div>
+    </div>
+
+    <!--商品种类的结果-->
+    <div class="inforeback" v-show="UI.kindshopsUI">
+        <h3>分类结果</h3>
+        <div class="shop" v-for="(shop, i) in kindshops" v-on:click="showtheshops(i, shop.id, kindshops)">
+            <img :src="shop.photo" height="100">
+            <label>名称：{{shop.name}}</label>
+            <label class="price">价格：{{shop.price}}</label>
+            <label>介绍：{{shop.describe}}</label>
+        </div>
+    </div>
+
+    <!--显示你的货物-->
+    <div class="inforeback" v-show="UI.myshopsUI">
+        <input class="btn1" type="button" value="添加商品" v-on:click="showadd">
+        <div class="shop" v-for="(shop, i) in myshops" v-on:click="showmyshopsinfore(i, shop.id, myshops)">
+            <img :src="shop.photo" height="100">
+            <label>名称：{{shop.name}}</label>
+            <label class="price">价格：{{shop.price}}</label>
+            <label>介绍：{{shop.describe}}</label>
+            <input class="btn" type="button" value="删除" v-on:click="deleteshops">
+        </div>
+    </div>
+
+    <!--展示你的商品的页面-->
+    <div class="inforeback" v-show="UI.myshopinforeUI">
+        <div>
+            <label>产品名称</label>
+            <input class="jtf" type="text" v-model="shop.name"><br>
+            <img :src="shop.photo" height="400"><br>
+            <label>描述:</label><br>
+            <textarea v-model="shop.describe"></textarea><br>
+            <label>商家：{{shop.sellername}}</label><br>
+            <label class="price">价格</label>
+            <input class="jtf" type="text" v-model="shop.price">
+            <label >状态：{{shop.type === 'pass' ? '通过' : shop.type === 'waiting' ? '等待' : '不通过'}}</label>
+            <input class="btn1" type="button" value="保存修改信息" v-on:click="changeshopinfore">
+            <input class="btn1" type="button" value="查看商品订单" v-on:click="showshoporder" v-if="shop.type === 'pass'">
+        </div>
+        <div>
+            <h3>评价</h3>
+            <form v-for="(evaluate, i) in shop_evaluates">
+                <label>用户名：{{evaluate.buyername}}</label><br>
+                <label>用户评价：{{evaluate.content}}</label><br>
+                <label>评价分数：{{evaluate.score}}</label>
+                <!--回复功能-->
+                <div>
+                    <textarea v-model="evaluate.response"></textarea>
+                    <input class="btn" value="回复" type="button" v-on:click="responsebuyer(i, shop_evaluates)">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--添加商品页面-->
+    <div class="inforeback" v-show="UI.addUI">
+        <label>图片</label>
+        <input class="btn1" type="file" @change="handleFileChange" accept="image/*"> <!-- 限制只能选择图片 -->
+        <!-- 图片预览 -->
+        <div v-if="shoppreviewUrl">
+            <img :src="shoppreviewUrl" style="max-width: 300px; max-height: 300px;">
+        </div>
+        <label>商品名称:</label><input class="jtf" type="text" v-model="shop.name">
+        <label>商品价格:</label><input class="jtf" type="text" v-model.number="shop.price"><br>
+        <label>商品描述:</label><br><textarea v-model="shop.describe"></textarea><br>
+        <label>商品数量:</label><input class="jtf" type="text" v-model.number="shop.number"><br>
+        <label>商品种类</label>
+        <select v-model="shop.kind">
+            <option value="">请选择</option>
+            <option v-for="kind in kinds">{{kind}}</option>
+        </select>
+        <input class="btn" type="button" value="提交" v-on:click="addshops">
+    </div>
+
+    <!--查看用户订单-->
+    <div class="inforeback" v-show="OrderUI.ordersUI">
+        <h3>我的订单</h3>
+        <form v-for="(order, i) in orders" >
+            <label>商品名称：{{order.shop_name}}</label><br>
+            <label>卖家：{{order.seller_name}}</label><br>
+            <label>订单状态：{{order.type}}</label><br>
+            <label>订单时间：{{formattedDate(order.sent_time)}}</label><br>
+            <input class="btn" type="button" value="取消订单" v-on:click="removeorder(i, orders)" v-if="order.type === '待发货'">
+            <input class="btn" type="button" value="确认收货" v-on:click="sureorders(i, orders)" v-if="order.type === '待收货'">
+            <input class="btn" type="button" value="退货" v-on:click="backshop(i, orders)" v-if="order.type==='已收货' || order.type==='已评价'">
+            <!--添加评论-->
+            <div v-if="order.type === '已完成'">
+                <h2>评论</h2>
+                <textarea v-model="myevaluate.content"></textarea><br>
+                <label>分数(满分100分):</label>
+                <input class="jtf" type="text" v-model.number="myevaluate.score">
+                <input class="btn" type="button" value="发表" v-on:click="submitevalue(i, orders)">
+            </div>
+        </form>
+
+    </div>
+
+    <!--支付页面-->
+    <div v-show="OrderUI.payUI">
+        <form>
+            <label>商品名称:{{shop.name}}</label><br>
+            <label>卖家：{{shop.sellername}}</label><br>
+            <label>购买方式</label>
+            <select v-model="order.pay_type">
+                <option value="">请选择</option>
+                <option value="先支付后到货">先支付后到货</option>
+                <option value="先到货后支付">先到货后支付</option>
+            </select><br>
+            <label>购买数量</label>
+            <input class="jtf" type="text" v-model.number="order.number">
+            <label class="warn" v-if="order.number>shop.number">没有那么多货</label><br>
+            <label>金额是{{shop.price*order.number}}</label>
+            <input class="btn" type="button" value="支付" v-on:click="addorder">
+            <input class="btn" type="button" value="取消" v-on:click="backtotheshop">
+        </form>
+    </div>
+
+    <!--显示你的评论-->
+    <div v-show="evaUI.myevaUI">
+        <h3>你的评论</h3>
+        <form v-for="(evaluate, i) in myevaluates">
+            <label>商品名称：{{evaluate.shopname}}</label><br>
+            <label>你的评价：{{evaluate.content}}</label><br>
+            <label>评价分数：{{evaluate.score}}</label>
+            <!--商家回复回复-->
+            <div v-if="evaluate.response !== ''">
+                <h3>商家回复</h3>
+                <label>{{evaluate.response}}</label>
+            </div>
+        </form>
+    </div>
+
+    <!--展示交易记录的页面-->
+    <div v-show="historyUI.shopUI" class="inforeback">
+        <h3>该商品的订单记录</h3>
+        <form v-for="(order, i) in shop_order">
+            <label>商品名称：{{order.shop_name}}</label><br>
+            <label>买家名称：{{order.buyer_name}}</label><br>
+            <label>金额：{{order.money}}</label><br>
+            <label>支付方式：{{order.pay_type}}</label><br>
+            <label>商品状态态：{{order.type}}</label><br>
+            <input class="btn1" type="button" value="改变订单状态" v-if="order.type==='待发货' || order.type==='配送中'"
+                   v-on:click="changeordertype(i, shop_order)">
+            <input class="btn1" type="button" value="同意退款" v-if="order.type==='待处理'" v-on:click="backmoney(i, shop_order)">
+        </form>
+    </div>
+
+    <!--展示消息页面-->
+    <div v-show="messageUI">
+        <h3>消息</h3><br>
+        <form v-for="(infor, i) in messagesinfore">
+            <label>消息:</label>
+            <label>{{infor.content}}</label>
+        </form>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+<script src="user.js"></script>
+</body>
+</html>
