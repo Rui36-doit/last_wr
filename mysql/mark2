@@ -1,0 +1,261 @@
+-- MySQL dump 10.13  Distrib 8.0.41, for Win64 (x86_64)
+--
+-- Host: 127.0.0.1    Database: mark
+-- ------------------------------------------------------
+-- Server version	8.0.41
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `evaluate`
+--
+
+DROP TABLE IF EXISTS `evaluate`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `evaluate` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '评论id',
+  `content` text COMMENT '内容',
+  `buyer_id` int DEFAULT NULL COMMENT '买家id',
+  `seller_id` int DEFAULT NULL COMMENT '卖家id',
+  `score` double DEFAULT NULL COMMENT '评分',
+  `buyername` varchar(50) DEFAULT NULL COMMENT '卖家名称',
+  `shopname` varchar(50) DEFAULT NULL COMMENT '商品名称',
+  `shop_id` int DEFAULT NULL COMMENT '商品id',
+  `response` text COMMENT '商家回应',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='评价表';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `evaluate`
+--
+
+LOCK TABLES `evaluate` WRITE;
+/*!40000 ALTER TABLE `evaluate` DISABLE KEYS */;
+INSERT INTO `evaluate` VALUES (1,'11111111',2,1,100,'天天','平板',1,'123456'),(2,'666',2,1,100,'天天',NULL,NULL,NULL),(3,'123456',1,2,12,'李华','平板电脑',1,'');
+/*!40000 ALTER TABLE `evaluate` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `history`
+--
+
+DROP TABLE IF EXISTS `history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `history` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '记录id',
+  `seller_id` int DEFAULT NULL COMMENT '卖家id',
+  `buyer_id` int DEFAULT NULL COMMENT '买家id',
+  `name` varchar(50) DEFAULT NULL COMMENT '商品名称',
+  `type` varchar(20) DEFAULT NULL COMMENT '交易状态',
+  `time` datetime DEFAULT NULL COMMENT '时间',
+  `seller_name` varchar(50) DEFAULT NULL COMMENT '商家昵称',
+  `buyer_name` varchar(50) DEFAULT NULL COMMENT '卖家昵称',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='历史交易';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `history`
+--
+
+LOCK TABLES `history` WRITE;
+/*!40000 ALTER TABLE `history` DISABLE KEYS */;
+INSERT INTO `history` VALUES (2,2,1,'平板电脑','配送中','2025-04-22 00:18:00','天天','李华'),(3,1,1,'平板电脑','待收货','2025-04-26 12:06:42','李华','李华'),(4,1,1,'平板电脑','待收货','2025-04-26 13:36:48','李华','李华'),(5,1,1,'平板电脑','待收货','2025-04-26 14:02:00','李华','李华'),(6,1,1,'平板电脑','待收货','2025-04-26 14:18:29','李华','李华'),(7,1,1,'平板电脑','待收货','2025-04-26 14:30:39','李华','李华'),(8,1,1,'平板电脑','待收货','2025-04-26 14:48:28','李华','李华'),(9,1,1,'平板电脑','待收货','2025-04-26 14:49:25','李华','李华'),(10,1,1,'平板电脑','待收货','2025-04-26 14:55:21','李华','李华'),(11,2,1,'耳机','待发货','2025-04-26 15:52:28','天天','李华');
+/*!40000 ALTER TABLE `history` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `infors`
+--
+
+DROP TABLE IF EXISTS `infors`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `infors` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '信息编号',
+  `user_id` int DEFAULT NULL COMMENT '用户id',
+  `content` int DEFAULT NULL COMMENT '内容',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `infors`
+--
+
+LOCK TABLES `infors` WRITE;
+/*!40000 ALTER TABLE `infors` DISABLE KEYS */;
+/*!40000 ALTER TABLE `infors` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `managers`
+--
+
+DROP TABLE IF EXISTS `managers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `managers` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `username` varchar(50) DEFAULT NULL COMMENT '账号',
+  `password` varchar(50) DEFAULT NULL COMMENT '密码',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='管理员信息';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `managers`
+--
+
+LOCK TABLES `managers` WRITE;
+/*!40000 ALTER TABLE `managers` DISABLE KEYS */;
+INSERT INTO `managers` VALUES (1,'manager01','123456');
+/*!40000 ALTER TABLE `managers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `orders`
+--
+
+DROP TABLE IF EXISTS `orders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `orders` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '订单编号',
+  `shop_id` int DEFAULT NULL COMMENT '商品id',
+  `seller_id` int DEFAULT NULL COMMENT '商家id',
+  `type` varchar(20) DEFAULT NULL COMMENT '订单状态',
+  `pay_type` varchar(20) DEFAULT NULL COMMENT '支付方式',
+  `sent_time` datetime DEFAULT NULL COMMENT '发货时间',
+  `buyer_id` int DEFAULT NULL COMMENT '买家id',
+  `number` int DEFAULT NULL COMMENT '商品数量',
+  `shop_name` varchar(50) DEFAULT NULL COMMENT '商品名称',
+  `seller_name` varchar(50) DEFAULT NULL COMMENT '卖家昵称',
+  `buyer_name` varchar(50) DEFAULT NULL COMMENT '卖家昵称',
+  `money` double DEFAULT NULL COMMENT '金额',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='订单表';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `orders`
+--
+
+LOCK TABLES `orders` WRITE;
+/*!40000 ALTER TABLE `orders` DISABLE KEYS */;
+INSERT INTO `orders` VALUES (1,1,2,'已评论','先支付后到货','2025-04-20 14:46:23',1,1,'平板电脑','天天','李华',9.9),(2,2,2,'待发货','先支付后到货','2025-04-20 16:56:29',1,1,'平板','天天','李华',1),(3,2,2,'待发货','先支付后到货','2025-04-20 17:10:10',0,1,'耳机','天天','李华',1),(4,16,1,'交易取消','先支付后到货','2025-04-20 17:18:04',1,1,'手表','李华','李华',1),(5,16,1,'交易取消','先支付后到货','2025-04-20 17:25:16',1,1,'手表','李华','李华',1),(6,2,2,'交易取消','先支付后到货','2025-04-20 17:27:38',1,2,'耳机','天天','李华',2),(7,1,1,'待收货','先支付后到货','2025-04-20 21:06:13',1,1,'平板电脑','李华','李华',1),(8,2,2,'待发货','先支付后到货','2025-04-26 15:52:28',1,1,'耳机','天天','李华',99);
+/*!40000 ALTER TABLE `orders` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `shops`
+--
+
+DROP TABLE IF EXISTS `shops`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `shops` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `name` varchar(10) DEFAULT NULL COMMENT '名称',
+  `price` double DEFAULT NULL COMMENT '价格',
+  `kind` varchar(50) DEFAULT NULL COMMENT '类别',
+  `seller_id` int DEFAULT NULL COMMENT '卖家id',
+  `number` int DEFAULT NULL COMMENT '库存',
+  `photo` varchar(200) DEFAULT NULL COMMENT '图片',
+  `time` datetime DEFAULT NULL COMMENT '发布时间',
+  `describe` text COMMENT '描述',
+  `type` varchar(10) DEFAULT NULL COMMENT '商品状态',
+  `seller_name` varchar(50) DEFAULT NULL COMMENT '卖家昵称',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='商品表单';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `shops`
+--
+
+LOCK TABLES `shops` WRITE;
+/*!40000 ALTER TABLE `shops` DISABLE KEYS */;
+INSERT INTO `shops` VALUES (1,'平板电脑',9.9,'电子产品',1,0,'shops_image/img.png','2025-04-16 20:58:42','9.9平板要不要','pass','李华'),(2,'耳机',99,'电子产品',2,2,'shops_image/img_1.png','2025-04-16 21:02:31','四六级全损音质耳机','pass','天天'),(16,'手表',90,'生活用品',1,0,'shops_image/11992bdf-c893-4146-8eef-a5e2982f942b_1634459245_byte1541920byte_e32cba9a39c0873f85ef1267b75911c9_iOS_w1440h1920.jpg','2025-04-18 23:24:48','崭新出厂','no','李华');
+/*!40000 ALTER TABLE `shops` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `system_infores`
+--
+
+DROP TABLE IF EXISTS `system_infores`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `system_infores` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `content` text COMMENT '内容',
+  `user_id` int DEFAULT NULL COMMENT '用户id',
+  `type` varchar(10) DEFAULT NULL COMMENT '消息状态',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `system_infores`
+--
+
+LOCK TABLES `system_infores` WRITE;
+/*!40000 ALTER TABLE `system_infores` DISABLE KEYS */;
+INSERT INTO `system_infores` VALUES (1,'您的商品：平板电脑已到货，请您查收',1,'已读'),(2,'您的商品：平板电脑已到货，请您查收',1,'已读'),(3,'您的商品：平板电脑已到货，请您查收',1,'已读'),(4,'您的商品：平板电脑已到货，请您查收',1,'已读'),(5,'您的商品：平板电脑已到货，请您查收',1,'已读'),(6,'您的商品：平板电脑已到货，请您查收',1,'已读');
+/*!40000 ALTER TABLE `system_infores` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) DEFAULT NULL COMMENT '姓名',
+  `password` varchar(50) DEFAULT NULL COMMENT '密码',
+  `email` varchar(50) DEFAULT NULL COMMENT '邮箱',
+  `money` double DEFAULT NULL COMMENT '余额',
+  `score` double DEFAULT NULL COMMENT '信用积分',
+  `phonenumber` varchar(50) DEFAULT NULL COMMENT '电话号码',
+  `type` varchar(10) DEFAULT NULL COMMENT '状态',
+  `avatar` varchar(200) DEFAULT NULL COMMENT '头像',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'李华','123456','@lihua.com',9603.1,100,'012345612345','ok',''),(2,'天天','123456','@tiantian.com',0,100,'01234','ok',NULL);
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-04-27  0:15:52
