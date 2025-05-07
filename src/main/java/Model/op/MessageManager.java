@@ -19,15 +19,19 @@ public class MessageManager {
     public static String getcontent(String infore, Order order){
         String content = null;
         if(infore.equals("senting")){
-            content = "您的商品：" + order.shop_name + "正在发货中";
+            content = "您的商品：" + order.shop_name + "正在配送中";
         }else if(infore.equals("waitingget")){
             content = "您的商品：" + order.shop_name + "已到货，请您查收";
         }else if(infore.equals("waitingsend")){
             content = "你已购买商品：" + order.shop_name;
         } else if (infore.equals("hasget")) {
             content = "用户：" + order.buyer_name + "(" + order.buyer_id + ")" + "已签收";
-        } else if(infore.equals("backshops")){
+        } else if(infore.equals("backshop")){
             content = "用户：" + order.buyer_name + "(" + order.buyer_id + ")" + "要求退货商品：" + order.shop_name + "请在你的订单处尽快处理";
+        } else if(infore.equals("backorder")){
+            content = "用户" + order.buyer_name + "已经取消" + order.shop_name + "的订单";
+        }else if(infore.equals("backmoney")){
+            content = "商家" + order.seller_name + "已为你的商品" + order.shop_name + "退款";
         }
         return content;
     }

@@ -33,7 +33,7 @@ new Vue({
             response: "",
             sort:'no',
             seller_score: "",
-            infor_type:"有新消息",
+            infor_type:"无新消息",
             socket: null
         }
     },
@@ -138,8 +138,8 @@ new Vue({
             this.UI.evaluateUI = false;
             this.UI.historyUI = true;
             //获取历史数据
-            axios.post("http://localhost:8080/the_last_exam_war/historyservelt", {},
-                {headers: { 'X-Action': "gethistory", 'Content-Type': 'application/json' }})
+            axios.post("http://localhost:8080/the_last_exam_war/historyservelt", this.user.id,
+                {headers: { 'X-Action': "showhistory", 'Content-Type': 'application/json' }})
                 .then(resp => {
                     this.histories = resp.data;
                 });
@@ -160,7 +160,6 @@ new Vue({
             this.OrderUI.ordersUI = false;
             this.OrderUI.theorderUI = false;
             this.evaUI.myevaUI = false;
-            alert("your infore");
             //获取评论数据
             axios.post("http://localhost:8080/the_last_exam_war/userservelt", {},
                 {headers: { 'X-Action': "getevaluate", 'Content-Type': 'application/json' }})
@@ -199,6 +198,7 @@ new Vue({
         },
         //查询商品数据
         searchforshops(){
+            this.UI.kindshopsUI = false;
             this.UI.shopsUI = false;
             this.UI.searchUI = true;
             axios.post("http://localhost:8080/the_last_exam_war/shopsservelt", this.searchkey,
@@ -277,13 +277,17 @@ new Vue({
                 {headers: { 'X-Action': "changeinfore", 'Content-Type': 'application/json' }})
                 .then(resp => {
                     this.shop_evaluates = resp.data;
+                    alert(resp.data);
                 })
         },
         //删除商品
         deleteshops(id){
+            alert(id);
             axios.post("http://localhost:8080/the_last_exam_war/shopsservelt", id,
-                {headers: { 'X-Action': "delectshops", 'Content-Type': 'application/json'}})
-                .then();
+                {headers: { 'X-Action': "delectshops"}})
+                .then(resp => {
+                    alert(resp.data);
+                });
         },
         //显示预览的照片
         handleFileChange(e) {
@@ -308,6 +312,7 @@ new Vue({
             this.shop.type = "waiting";
             this.shop.sellername = this.user.name;
             this.shop.sellerid = this.user.id;
+            this.shop.time = null;
             const {data: result} = await axios.post("http://localhost:8080/the_last_exam_war/shopsservelt", this.shop,
                 {headers: { 'X-Action': "addshops", 'Content-Type': 'application/json' }})
             alert(result);
@@ -375,6 +380,8 @@ new Vue({
                     if(resp.data === 'yes'){
                         this.user.money = this.user.money - this.order.money;
                         alert("交易成功");
+                    }else if(resp.data === '你已被封禁'){
+                        alert(resp.data);
                     }else{
                         alert("交易失败");
                     }
@@ -414,6 +421,9 @@ new Vue({
                         alert("退货失败");
                     }
                 })
+            //添加历史记录
+            axios.post("http://localhost:8080/the_last_exam_war/historyservelt", arr[i],
+                {headers: { 'X-Action': "addhistory",'Content': "backorder", 'Content-Type': 'application/json' }})
         },
         //改变时间格式
         formattedDate(dateArray) {
@@ -461,7 +471,7 @@ new Vue({
         responsebuyer(i, arr){
             //arr[i].response = this.response;
             const newitem = { ...arr[i] };
-            newitem.response = this.response;
+            alert("上传回复" + newitem.response);
             axios.post("http://localhost:8080/the_last_exam_war/transationservelt", newitem,
                 {headers: { 'X-Action': "addresponse", 'Content-Type': 'application/json' }})
                 .then(resp => {
@@ -514,7 +524,7 @@ new Vue({
             this.OrderUI.payUI = false;
             this.OrderUI.ordersUI = false;
             this.OrderUI.theorderUI = false;
-            this.evaUI.myevaUI = true;
+            this.evaUI.myevaUI = false;
             this.historyUI.shopUI = true;
             this.inforUI = false;
             axios.post("http://localhost:8080/the_last_exam_war/transationservelt", this.shop,
@@ -594,6 +604,26 @@ new Vue({
             axios.post("http://localhost:8080/the_last_exam_war/inforservelt", this.user.id,
                 {headers: { 'X-Action': "updatainfore", 'Content-Type': 'application/json'}})
         },
+        showTempAlert(message, duration) {
+            const alertBox = document.createElement("div");
+            alertBox.style.position = "fixed";
+            alertBox.style.top = "20px";
+            alertBox.style.left = "50%";
+            alertBox.style.transform = "translateX(-50%)";
+            alertBox.style.padding = "15px";
+            alertBox.style.backgroundColor = "#4CAF50";
+            alertBox.style.color = "white";
+            alertBox.style.borderRadius = "5px";
+            alertBox.style.boxShadow = "0 2px 10px rgba(0,0,0,0.2)";
+            alertBox.style.zIndex = "1000";
+            alertBox.textContent = message;
+
+            document.body.appendChild(alertBox);
+
+            setTimeout(() => {
+                alertBox.remove();
+            }, duration);
+        },
         //连接WebSocket
         initWebSocket(){
             wsUrl = `ws://localhost:8080/the_last_exam_war/system_ws/${this.user.id}`;
@@ -605,6 +635,7 @@ new Vue({
 
             this.socket.onmessage = (event) => {
                 this.messagesinfore.push(JSON.parse(event.data));
+                this.showTempAlert("你有新消息", 3000);
             }
 
             this.socket.onclose = () => {
@@ -633,8 +664,9 @@ new Vue({
             const neworder = { ...arr[i] };
             neworder.type = "已退款";
             //更新订单并退款
-            if(this.user.money > arr[i].money){axios.post("http://localhost:8080/the_last_exam_war/transationservelt", neworder,
-                {headers: { 'X-Action': "backmoney", 'Content': "backshop", 'Content-Type': 'application/json'}})
+            if(this.user.money > arr[i].money){
+                axios.post("http://localhost:8080/the_last_exam_war/transationservelt", neworder,
+                {headers: { 'X-Action': "backmoney", 'Content-Type': 'application/json'}})
                 .then(resp => {
                     if(resp.data === 'yes'){
                         alert("处理成功");
@@ -642,6 +674,8 @@ new Vue({
                         alert("处理失败");
                     }
                 })
+                axios.post("http://localhost:8080/the_last_exam_war/historyservelt", neworder,
+                    {headers: { 'X-Action': "addhistory", 'Content': "backmoney", 'Content-Type': 'application/json'}})
             }else {
                 alert("你的余额不足");
             }

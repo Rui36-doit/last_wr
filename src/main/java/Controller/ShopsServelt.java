@@ -139,11 +139,12 @@ public class ShopsServelt extends BaseServelt{
         writer.write("修改完成");
     }
     //删除商品的信息
-    public void deldctcshops(HttpServletRequest req, HttpServletResponse resp) throws IOException, SQLException {
+    public void delectshops(HttpServletRequest req, HttpServletResponse resp) throws IOException, SQLException {
         ShopsManager manager = new ShopsManager();
         PrintWriter writer = resp.getWriter();
         String idstr = JSONUtils.getStr(req);
         int id = Integer.valueOf(idstr);
+        System.out.println(id);
         int t = manager.delect(id);
         if(t > 0){
             writer.write("删除成功，请刷新数据");
@@ -219,7 +220,6 @@ public class ShopsServelt extends BaseServelt{
         Double score = ShopsManager.getscore(id);
         System.out.println(score);
         String scorestr = score.toString();
-        System.out.println(scorestr);
         writer.write(scorestr);
     }
 }

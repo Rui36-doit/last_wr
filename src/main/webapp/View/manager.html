@@ -17,6 +17,7 @@
         <input type="button" class="btn2" value="查看所有订单" v-on:click="getallorder">
         <input type="button" class="btn2" value="查看所有商品" v-on:click="showallshops">
         <input type="button" class="btn2" value="查看销售总额" v-on:click="getallmoney">
+        <input type="button" class="btn2" value="退出登录" v-on:click="outlogin">
     </div>
 
     <!--待审核数据-->
@@ -110,7 +111,7 @@
         <label>用户评分：{{user.score}}</label><br>
         <label>用户邮箱：{{user.email}}</label><br>
         <label>用户电话号码：{{user.phonenumber}}</label><br>
-        <label>用户状态：{{user.type === 'ok' ? '正常' : shop.type === 'no' ? '封禁' : '未知'}}</label>
+        <label>用户状态：{{user.type === 'ok' ? '正常' : user.type === 'no' ? '封禁' : '未知'}}</label>
         <input class="btn1" type="button" value="封禁该用户" v-if="user.type === 'ok'" v-on:click="block_the_user">
         <input class="btn1" type="button" value="解封该用户" v-if="user.type === 'no'" v-on:click="up_the_user">
         <input class="btn1" type="button" value="查看用户的订单" v-on:click="showuserorder">

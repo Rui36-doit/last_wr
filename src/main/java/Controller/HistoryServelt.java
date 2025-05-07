@@ -23,6 +23,7 @@ public class HistoryServelt extends BaseServelt{
         PrintWriter writer = resp.getWriter();
         try {
             String idstr = JSONUtils.getStr(req);
+            System.out.println(idstr);
             int id = Integer.valueOf(idstr);
             String json = Historymanager.showuserhistory(id);
             writer.write(json);
@@ -49,20 +50,21 @@ public class HistoryServelt extends BaseServelt{
             boolean flag = Historymanager.addhistory(order);
             //添加消息
             String infor = req.getHeader("Content");
+            System.out.println("infore = " + infor);
             if(infor != null){
                 String content = MessageManager.getcontent(infor, order);
                 Systeminfor message = new Systeminfor(order.buyer_id, content,"未读");
                 //发送给用户
-                if(infor.equals("senting") || infor.equals("waitingget") || infor.equals("waitingsend")) {
+                if(infor.equals("senting") || infor.equals("waitingget") || infor.equals("waitingsend") || infor.equals("backmoney")) {
                     Integer id = order.buyer_id;
                     String userid = id.toString();
-                    SystemWebSocket.sendMessage(userid, message);
                     MessageManager.addmessage(order.buyer_id, "未读", order, infor);
-                }else if(infor.equals("hasget") || infor.equals("backshop")){
+                    SystemWebSocket.sendMessage(userid, message);
+                }else if(infor.equals("hasget") || infor.equals("backshop") || infor.equals("backorder")){
                     Integer id = order.seller_id;
                     String userid = id.toString();
-                    SystemWebSocket.sendMessage(userid, message);
                     MessageManager.addmessage(order.seller_id, "未读", order, infor);
+                    SystemWebSocket.sendMessage(userid, message);
                 }
             }
             if(flag){

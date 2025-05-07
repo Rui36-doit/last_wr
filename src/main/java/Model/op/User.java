@@ -104,6 +104,16 @@ public class User {
             System.out.println("删除失败");
         }
     }
+    //给商家评分
+    public static boolean addscore(double score, int id) throws SQLException {
+        score = score - 50;
+        String sql = "update users set score = score + ? where id = ?";
+        int t = JDBCUtil.update(sql, score*0.05, id);
+        if(t == 0){
+            return false;
+        }
+        return true;
+    }
     //确认收货
     public double sureorder(Order order) throws SQLException {
         TransationManager.updatatype("已完成", order.id);
@@ -114,8 +124,5 @@ public class User {
         }
         return 0;
     }
-    //退出登录
-    public void outlogin(){
 
-    }
 }

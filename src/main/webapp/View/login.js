@@ -2,12 +2,12 @@ new Vue({
     el:"#loginapp",
     data(){
         return{
-            count:3,
+            count:1,
             type: "login",
             login: {email: "", password: "", warn: 1},
-            registerinfor:{passwordagain:""},
+            register: {username: "", password: "", passwordagain: "", warning1: 0, warn: 1},
             warn1: 1,
-            UI:{loginissee: false, inforissee: false,getinforsee: true, managerloginUI: false},
+            UI:{loginissee: true, inforissee: false,getinforsee: false, managerloginUI: false},
             //UI:{loginissee: false, inforissee: false, classsee: false, getinforsee: false, addclassUI: true},
             user:{id: 0, name: "", password:"", email:"", money:0.0, score:0.0, phonenumber:"", type:"", avatar:""},
             manager:{id: 0, username:"", password:""},
@@ -55,9 +55,9 @@ new Vue({
         //提交注册时的数据
         doregister(){
             if(this.isEmptyregister()===false&&
-                this.user.password===this.registerinfor.passwordagain){
+                this.register.password===this.register.passwordagain){
                 var infore = {
-                    "email": this.user.email,
+                    "email": this.register.username,
                     "password": this.register.password,
                 };
                 axios.post("http://localhost:8080/the_last_exam_war/userservelt", infore,{headers: { 'X-Action': "check" }}).
@@ -132,17 +132,26 @@ new Vue({
             this.count = 3;
             this.UI.loginissee = false;
             this.UI.managerloginUI = true;
+            axios.post("http://localhost:8080/the_last_exam_war/userservelt", {},
+                {headers: { 'X-Action': "start", 'Content-Type': 'application/json' }})
         },
+        //提交用户的完善信息
         async submituser(){
             const formData = new FormData();
             formData.append('image', this.userfile);
             const {data: iamgeurl} = await axios.post("http://localhost:8080/the_last_exam_war/shopsservelt", formData,
                 {headers: { 'X-Action': "getphoto",'type': "avatar", 'Content-Type': 'multipart/form-data'}})
             this.user.avatar = iamgeurl;
-            this.user.password = this.registerinfor.passwordagain;
+            this.user.password = this.register.passwordagain;
+            this.user.email = this.register.username;
+            this.user.type = 'ok';
+            this.user.score = 100.0;
             const {data: result} = await axios.post("http://localhost:8080/the_last_exam_war/userservelt", this.user,
                 {headers: { 'X-Action': "register", 'Content-Type': 'application/json' }})
             alert(result);
+            this.UI.getinforsee = false;
+            this.UI.loginissee = true;
+            this.count = 1;
         }
     }
 });

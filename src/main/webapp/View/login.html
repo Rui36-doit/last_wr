@@ -30,13 +30,13 @@
         <form v-if="count === 2">
             <h2>注册</h2>
             <label for="user2">邮箱</label>
-            <input class="jtf" id = "user2" type="text" v-model="user.email">
-            <label class="warn" v-if="user.email === ''">*必填*</label><br>
+            <input class="jtf" id = "user2" type="text" v-model="register.username">
+            <label class="warn" v-if="register.username === ''">*必填*</label><br>
             <!--<label class="warn" v-if="checkname(register.username) === false">账号只能包含数字</label><br>-->
             <label for="pw1">密码</label>
-            <input class="jtf" id="pw1" type="password" v-model="registerinfor.password" v-on:input="compare"><label class="warn" v-if="user.password === ''">*必填*</label><br>
+            <input class="jtf" id="pw1" type="password" v-model="register.password" v-on:input="compare"><label class="warn" v-if="register.password === ''">*必填*</label><br>
             <label>再次输入密码</label>
-            <input class="jtf" id="pw2" type="password" v-model="registerinfor.passwordagain"  v-on:input="compare"><label class="warn" v-if="register.passwordagain === ''">*必填*</label><br>
+            <input class="jtf" id="pw2" type="password" v-model="register.passwordagain"  v-on:input="compare"><label class="warn" v-if="register.passwordagain === ''">*必填*</label><br>
             <label class="warn" id="warn1" v-if="register.warning1 === 1">密码不一致</label><br v-if="register.warning1 === 1">
             <input class="btn" type="button" value="注册" v-on:click="doregister">
         </form>
@@ -50,7 +50,7 @@
                 <img :src="userpreviewUrl" style="max-width: 200px; max-height: 200px;">
             </div>
             <label for="email">邮箱</label>
-            <input class="jtf" id = "email" type="text" v-model="user.email">
+            <input class="jtf" id = "email" type="text" v-model="register.username">
             <label class="warn" v-if="register.email === ''">*必填*</label><br>
             <label for="name">姓名</label>
             <input class="jtf" id="name" type="text" v-model="user.name">

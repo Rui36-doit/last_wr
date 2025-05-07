@@ -52,6 +52,37 @@ public class JDBCUtil {
         Connection connection = connectpool.getConnection();
         //连接获取数据库对象
         PreparedStatement pres = connection.prepareStatement(sql);
+        try {
+            ResultSet result = null;
+            connection.setAutoCommit(false);
+            if(parms.length != 0) {
+                for (int i = 0; i < parms.length; i++) {
+                    if (parms[i].getClass() == Integer.class) {
+                        pres.setInt(i + 1, (int) parms[i]);
+                    } else {
+                        pres.setString(i + 1, parms[i].toString());
+                    }
+                }
+            }
+            result = pres.executeQuery();
+            connection.commit();
+            Box box = new Box(result, pres);
+            //pres.close();
+            connectpool.backConnection(connection);
+            return box;
+        } catch (SQLException e) {
+            pres.close();
+            connectpool.backConnection(connection);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /*
+    public static Box search(String sql, Object... parms) throws SQLException {
+        Connection connection = connectpool.getConnection();
+        //连接获取数据库对象
+        PreparedStatement pres = connection.prepareStatement(sql);
         ResultSet result = null;
         connection.setAutoCommit(false);
         if(parms.length != 0) {
@@ -70,5 +101,6 @@ public class JDBCUtil {
         connectpool.backConnection(connection);
         return box;
     }
+     */
 }
 

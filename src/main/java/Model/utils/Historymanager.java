@@ -36,8 +36,8 @@ public class Historymanager {
         box.close();
         History history = list.get(0);
         System.out.println(history.time);
-        System.out.println();
         String json = JSONUtils.toJSON(list);
+        System.out.println(json);
         return json;
     }
 

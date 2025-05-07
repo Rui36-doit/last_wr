@@ -92,14 +92,16 @@ public class ManagerServelt extends BaseServelt{
         String json = JSONUtils.getJSONstr(req);
         User user = JSONUtils.getObjectbyjson(json, User.class);
         boolean flag = manager.changetypeuser(user);
+        //判断有用户在不在线
         Map<String, HttpSession> map = (Map<String, HttpSession>) req.getServletContext().
-                getAttribute("onlineuser");
+                getAttribute("onlineusers");
         String removeid = null;
         for(Map.Entry<String, HttpSession> entry: map.entrySet()){
             HttpSession session1 = entry.getValue();
             User user1 = (User) session1.getAttribute("user");
             if(user1.id == user.id){
                 removeid = entry.getKey();
+                System.out.println("用户在线");
                 break;
             }
         }

@@ -3,6 +3,7 @@ package Controller;
 import Model.mysql.Connectpool;
 import Model.op.Evaluate;
 import Model.op.History;
+import Model.op.Manager;
 import Model.op.User;
 import Model.utils.Box;
 import Model.utils.JDBCUtil;
@@ -42,6 +43,10 @@ public class UserServelt extends BaseServelt{
         super.destroy();
         JDBCUtil.connectpool.closeALL();
         System.out.println("连接池关闭");
+    }
+
+    public void start(HttpServletRequest req, HttpServletResponse resp){
+        System.out.println("s");
     }
 
     //用户登录代码
@@ -89,12 +94,16 @@ public class UserServelt extends BaseServelt{
         }
     }
 
-    //向对应的页面传第信息
+    //向对应的页面传的信息
     public void sentinfore(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
         HttpSession session = req.getSession();
         User user = (User)session.getAttribute("user");
+        if(!Manager.isonline(req, user.id)){
+            System.out.println("用户不在线");
+            return;
+        }
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(user);
         PrintWriter writer = resp.getWriter();
@@ -106,7 +115,7 @@ public class UserServelt extends BaseServelt{
     public void check(HttpServletRequest req, HttpServletResponse resp) throws IOException, SQLException {
         PrintWriter writer = resp.getWriter();
         Infore infore = JSONUtils.getObject(req,Infore.class);
-        String sql = "select email from users where email = '?";
+        String sql = "select email from users where email = ?";
         Box box = JDBCUtil.search(sql, infore.email);
         ResultSet resultSet = box.getResult();
         if(resultSet.next()){
@@ -137,7 +146,7 @@ public class UserServelt extends BaseServelt{
     public void changeinfor(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         PrintWriter writer  = resp.getWriter();
         String back;
-        //获取膝盖的信息
+        //获取修改的信息
         try {
             User user1 = JSONUtils.getObject(req, User.class);
             HttpSession session = req.getSession();
@@ -192,6 +201,9 @@ public class UserServelt extends BaseServelt{
                 writer.write("no");
                 return;
             }
+            double score = evaluate.score;
+            int id = evaluate.seller_id;
+            User.addscore(score, id);
             writer.write("yes");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -209,7 +221,6 @@ public class UserServelt extends BaseServelt{
                 onlineUsers.remove(session.getId());
                 session.invalidate();
             }
-
             System.out.println(user.name + "退出登录");
         }
     }

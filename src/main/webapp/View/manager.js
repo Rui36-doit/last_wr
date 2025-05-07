@@ -129,7 +129,7 @@ new Vue({
         up_the_user(){
             this.user.type = "ok";
             axios.post("http://localhost:8080/the_last_exam_war/managerservelt", this.user,
-                {headers: { 'X-Action': "upkuser", 'Content-Type': 'application/json'}})
+                {headers: { 'X-Action': "upuser", 'Content-Type': 'application/json'}})
                 .then(resp => {
                     if(resp.data === 'yes'){
                         alert("已解封");
@@ -140,12 +140,19 @@ new Vue({
         },
         //显示审核商品的信息
         showwaitingshops(){
-            this.UI.waitingshopsUI = true;
+            this.UI.searchUI = false;
+            this.UI.shopsUI = false;
             this.UI.theshopUI = false;
+            this.UI.searchheadUI = false;
+            this.UI.waitingshopsUI = true;
             this.UserUI.usersUI = false;
             this.UserUI.userUI = false;
+            this.UserUI.userorderUI = false;
+            this.UserUI.userhistoryUI = false;
+            this.OrderUI.startUI = true;
+            this.OrderUI.searchUI = false;
             this.OrderUI.ordersUI = false;
-            this.OrderUI.startUI = false;
+
             //获取待审核的商品
             axios.post("http://localhost:8080/the_last_exam_war/shopsservelt", {},
                 {headers: { 'X-Action': "getwaitingshops", 'Content-Type': 'application/json'}})
@@ -191,10 +198,18 @@ new Vue({
         },
         //获取所有的订单
         getallorder(){
-            this.UI.waitingshopsUI = false;
+            this.UI.searchUI = false;
+            this.UI.shopsUI = false;
             this.UI.theshopUI = false;
-            this.OrderUI.ordersUI = true;
+            this.UI.searchheadUI = false;
+            this.UI.waitingshopsUI = false;
+            this.UserUI.usersUI = false;
+            this.UserUI.userUI = false;
+            this.UserUI.userorderUI = false;
+            this.UserUI.userhistoryUI = false;
             this.OrderUI.startUI = true;
+            this.OrderUI.searchUI = false;
+            this.OrderUI.ordersUI = true;
             axios.post("http://localhost:8080/the_last_exam_war/transationservelt", this.user,
                 {headers: { 'X-Action': "showallorder", 'Content-Type': 'application/json'}})
                 .then(resp => {
@@ -214,10 +229,19 @@ new Vue({
         },
         //显示所有的商品
         showallshops(){
-            this.UI.searchheadUI = true;
             this.UI.searchUI = false;
-            this.UI.waitingshopsUI = false;
             this.UI.shopsUI = true;
+            this.UI.theshopUI = false;
+            this.UI.searchheadUI = true;
+            this.UI.waitingshopsUI = false;
+            this.UserUI.usersUI = false;
+            this.UserUI.userUI = false;
+            this.UserUI.userorderUI = false;
+            this.UserUI.userhistoryUI = false;
+            this.OrderUI.startUI = false;
+            this.OrderUI.searchUI = false;
+            this.OrderUI.ordersUI = false;
+
             axios.post("http://localhost:8080/the_last_exam_war/shopsservelt", {},
                 {headers: { 'X-Action': "showshops", 'Content-Type': 'application/json'}})
                 .then(resp => {
@@ -297,6 +321,11 @@ new Vue({
                 .then(resp => {
                     this.timesum = Number(resp.data);
                 })
+        },
+        //退出登录
+        outlogin(){
+            this.manager = null;
+            window.location.href = "/the_last_exam_war/View/login.html";
         }
     }
 })

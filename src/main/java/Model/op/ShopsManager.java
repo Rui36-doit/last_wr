@@ -61,7 +61,7 @@ public class ShopsManager {
 
     //传递商品的信息
     public ArrayList<Shops> getshops() throws SQLException {
-        String sql = "select * from shops";
+        String sql = "select * from shops where type = 'pass';";
         Box box = JDBCUtil.search(sql);
         ArrayList<Shops> list = getshoplists(box);
         box.close();
@@ -97,7 +97,7 @@ public class ShopsManager {
     //搜索商品的信息
     public ArrayList<Shops> searchshops(String name, String type, String sort) throws SQLException {
         ArrayList<Shops> list = new ArrayList<>();
-        String sql = "select * from shops s where locate(?, s.name) >0 or locate(?, s.kind)>0";
+        String sql = "select * from shops s where (locate(?, s.name) >0 or locate(?, s.kind)>0) and type = 'pass'";
         Box box = JDBCUtil.search(sql, name, name);
         ResultSet resultSet = box.getResult();
         while (resultSet.next()){
@@ -169,8 +169,8 @@ public class ShopsManager {
     }
     //根据分类查询
     public ArrayList<Shops> getkindshops(String kind) throws SQLException {
-        String sql = "select id, name, price, kind, seller_id, number," +
-                " photo, time, `describe`, type, seller_name from shops where kind = ?";
+        String sql = "select id, name, price, kind, seller_id, number, photo, time, `describe`, type, " +
+                "seller_name from shops where kind = ? and type = 'pass';";
         Box box = JDBCUtil.search(sql, kind);
         ArrayList<Shops> list = getshoplists(box);
         return list;

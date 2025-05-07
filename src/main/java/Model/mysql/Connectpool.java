@@ -12,7 +12,7 @@ public class Connectpool {
     public Connectpool(String database){
         this.database = database;
         try {
-            for(int i = 0; i < 5; i++){
+            for(int i = 0; i < 8; i++){
                 Connection connection = start();
                 lists.add(connection);
             }
@@ -48,7 +48,7 @@ public class Connectpool {
 
     //返回连接给队列
     public void backConnection(Connection connection){
-        if(lists.size() == 5){
+        if(lists.size() == 8){
             System.out.println("队列已满");
             return;
         }
@@ -58,11 +58,11 @@ public class Connectpool {
     //关闭所有的链接
     public void closeALL(){
         try {
-            if(lists.size() != 5){
+            if(lists.size() != 8){
                 System.out.println("还有连接未归还");
                 return;
             }
-            for(int i = 0; i < 5; i++){
+            for(int i = 0; i < 8; i++){
                 Connection connection = lists.remove();
                 connection.close();
             }

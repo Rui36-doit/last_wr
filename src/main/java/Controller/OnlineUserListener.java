@@ -34,4 +34,5 @@ public class OnlineUserListener implements ServletContextListener, HttpSessionLi
     public Map<String, HttpSession> getOnlineUsers(HttpSession session){
         return (Map<String, HttpSession>) session.getServletContext().getAttribute("onlineusers");
     }
+
 }

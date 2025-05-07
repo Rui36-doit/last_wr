@@ -20,6 +20,7 @@
         <input class="btn2" type="button" value="查看我的评论" v-on:click="showmyevalues">
         <input class="btn2" type="button" value="查看我的消息" v-on:click="showmassage">
         <label class="infore" v-on:click="toinfore">用户名：{{user.name}}</label>
+        <img :src="user.avatar" height="50">
         <input class="btn2" type="button" value="退出登录" v-on:click="outlogin">
     </div>
 
@@ -40,7 +41,7 @@
 
     <!--主页面推荐商品-->
     <div v-show="UI.shopsUI">
-        <h2>推荐商品</h2>
+        <h2>商品</h2>
         <div class="shop" v-for="(shop, i) in adviceshops" v-on:click="showtheshops(i, shop.id, adviceshops)">
             <img :src="shop.photo" height="100">
             <label>名称：{{shop.name}}</label>
@@ -83,7 +84,7 @@
             <label>评价分数：{{evaluate.score}}</label><br>
             <label>回复用户</label>
             <div>
-                <textarea v-model="response"></textarea>
+                <textarea v-model="evaluate.response"></textarea>
                 <input class="btn" type="button" value="回复" v-on:click="responsebuyer(i, evaluates)">
             </div>
         </form>
@@ -93,9 +94,10 @@
     <div class="inforeback" v-show="UI.historyUI">
         <h3>历史交易记录</h3>
         <form v-for="history in histories">
-            <label>买方：{{history.seller}}</label><br>
-            <label>商品：{{history.shop}}</label><br>
-            <label>时间：{{history.time}}</label>
+            <label>买方：{{history.seller_name}}</label><br>
+            <label>商品：{{history.name}}</label><br>
+            <label>商品状态：{{history.type}}</label><br>
+            <label>时间：{{formattedDate(history.time)}}</label>
         </form>
     </div>
 
@@ -150,12 +152,13 @@
     <!--显示你的货物-->
     <div class="inforeback" v-show="UI.myshopsUI">
         <input class="btn1" type="button" value="添加商品" v-on:click="showadd">
-        <div class="shop" v-for="(shop, i) in myshops" v-on:click="showmyshopsinfore(i, shop.id, myshops)">
+        <div class="shop" v-for="(shop, i) in myshops">
             <img :src="shop.photo" height="100">
             <label>名称：{{shop.name}}</label>
             <label class="price">价格：{{shop.price}}</label>
             <label>介绍：{{shop.describe}}</label>
-            <input class="btn" type="button" value="删除" v-on:click="deleteshops">
+            <input class="btn" type="button" value="查看货物" v-on:click="showmyshopsinfore(i, shop.id, myshops)">
+            <input class="btn" type="button" value="删除" v-on:click="deleteshops(shop.id)">
         </div>
     </div>
 
@@ -219,7 +222,7 @@
             <label>订单时间：{{formattedDate(order.sent_time)}}</label><br>
             <input class="btn" type="button" value="取消订单" v-on:click="removeorder(i, orders)" v-if="order.type === '待发货'">
             <input class="btn" type="button" value="确认收货" v-on:click="sureorders(i, orders)" v-if="order.type === '待收货'">
-            <input class="btn" type="button" value="退货" v-on:click="backshop(i, orders)" v-if="order.type==='已收货' || order.type==='已评价'">
+            <input class="btn" type="button" value="退货" v-on:click="backshop(i, orders)" v-if="order.type==='已完成' || order.type==='已评论'">
             <!--添加评论-->
             <div v-if="order.type === '已完成'">
                 <h2>评论</h2>
@@ -275,7 +278,7 @@
             <label>买家名称：{{order.buyer_name}}</label><br>
             <label>金额：{{order.money}}</label><br>
             <label>支付方式：{{order.pay_type}}</label><br>
-            <label>商品状态态：{{order.type}}</label><br>
+            <label>商品状态：{{order.type}}</label><br>
             <input class="btn1" type="button" value="改变订单状态" v-if="order.type==='待发货' || order.type==='配送中'"
                    v-on:click="changeordertype(i, shop_order)">
             <input class="btn1" type="button" value="同意退款" v-if="order.type==='待处理'" v-on:click="backmoney(i, shop_order)">
@@ -293,6 +296,7 @@
 </div>
 
 
+<!-- 使用 unpkg CDN -->
 <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>

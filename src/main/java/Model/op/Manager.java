@@ -58,7 +58,7 @@ public class Manager {
 
     //封禁用户
     public boolean changetypeuser(User user) throws SQLException {
-        String sql = "update users set type = '?' where id = ?";
+        String sql = "update users set type = ? where id = ?";
         int t = JDBCUtil.update(sql, user.type, user.id);
         if(t == 0){
             return false;
@@ -108,10 +108,8 @@ public class Manager {
         Box box = JDBCUtil.search(sql);
         ResultSet resultSet = box.getResult();
         Double sum = 0.0;
-        int i = 0;
         while (resultSet.next()){
-            sum = sum + resultSet.getDouble(i + 1);
-            i++;
+            sum = sum + resultSet.getDouble("money");
         }
         return sum;
     }
@@ -126,11 +124,25 @@ public class Manager {
                 "and year(sent_time) = ? and month(sent_time) = ?;";
         Box box = JDBCUtil.search(sql, year, month);
         ResultSet resultSet = box.getResult();
-        int i = 1;
         while (resultSet.next()){
-            sum = sum + resultSet.getDouble(i);
-            i++;
+            sum = sum + resultSet.getDouble("money");
         }
         return sum;
+    }
+
+    public static boolean isonline(HttpServletRequest req, int id){
+        Map<String, HttpSession> map = (Map<String, HttpSession>) req.getServletContext().
+                getAttribute("onlineusers");
+        String removeid = null;
+        for(Map.Entry<String, HttpSession> entry: map.entrySet()){
+            HttpSession session1 = entry.getValue();
+            User user1 = (User) session1.getAttribute("user");
+            if(user1.id == id){
+                removeid = entry.getKey();
+                System.out.println("用户在线");
+                return true;
+            }
+        }
+        return false;
     }
 }

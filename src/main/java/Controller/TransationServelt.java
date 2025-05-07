@@ -25,6 +25,9 @@ public class TransationServelt extends BaseServelt{
         try {
             HttpSession session = req.getSession();
             User user = (User) session.getAttribute("user");
+            if(!Manager.isonline(req, user.id)){
+                writer.write("你已被封禁");
+            }
             String json = JSONUtils.getJSONstr(req);
             System.out.println(json + "!");
             TransationManager tm = new TransationManager();
@@ -92,8 +95,9 @@ public class TransationServelt extends BaseServelt{
             writer.write("yes");
             return;
         }
+        //支付
         String sql = "update users set money = money + ? where id = ?;";
-        int t = JDBCUtil.update(sql, m, order.buyer_id);
+        int t = JDBCUtil.update(sql, m, order.seller_id);
         if(t == 0){
             System.out.println("转账失败");
             writer.write("no");
@@ -152,7 +156,7 @@ public class TransationServelt extends BaseServelt{
         String json = JSONUtils.getJSONstr(req);
         Shops shops = JSONUtils.getObjectbyjson(json, Shops.class);
         String sql = "select id, shop_id, seller_id, type, pay_type, sent_time, buyer_id, number, shop_name, seller_name, " +
-                "buyer_name, money from orders o where shop_id = ? and type != '已完成';";
+                "buyer_name, money from orders o where shop_id = ?;";
         Box box = JDBCUtil.search(sql, shops.id);
         TransationManager tm = new TransationManager();
         ArrayList<Order> list = tm.getorderlist(box);
